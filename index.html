@@ -1273,17 +1273,20 @@
         </button>
     </div>
 
-<script>
-    // === تكوين Firebase ===
-    const firebaseConfig = {
-        apiKey: "AIzaSyAOt_wSsxdFIfI_waLgEURgrtbfb1yuhBE",
-        authDomain: "smart-election-system-7850b.firebaseapp.com",
-        databaseURL: "https://smart-election-system-7850b-default-rtdb.firebaseio.com",
-        projectId: "smart-election-system-7850b",
-        storageBucket: "smart-election-system-7850b.firebasestorage.app",
-        messagingSenderId: "605066227180",
-        appId: "1:605066227180:web:11664129f3d89acb9c64c9"
-    };
+<script>// === تكوين Firebase ===
+const firebaseConfig = {
+    apiKey: "AIzaSyAOt_wSsxdFIfI_waLgEURgrtbfb1yuhBE",
+    authDomain: "smart-election-system-7850b.firebaseapp.com",
+    databaseURL: "https://smart-election-system-7850b-default-rtdb.europe-west1.firebasedatabase.app", // ← تم التصحيح!
+    projectId: "smart-election-system-7850b",
+    storageBucket: "smart-election-system-7850b.firebasestorage.app",
+    messagingSenderId: "605066227180",
+    appId: "1:605066227180:web:11664129f3d89acb9c64c9"
+};
+
+// تهيئة Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
     // تهيئة Firebase
     firebase.initializeApp(firebaseConfig);
