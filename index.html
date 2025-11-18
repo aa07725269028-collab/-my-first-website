@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام الانتخابي الذكي</title>
@@ -20,14 +19,6 @@
     <meta name="twitter:description" content="نظام التصويت الإلكتروني الآمن والمتقدم" id="twitterDescription">
     <meta name="twitter:image" content="https://via.placeholder.com/1200x630/1a237e/ffffff?text=النظام+الانتخابي+الذكي" id="twitterImage">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-    /* الأنماط الحالية */
-    </style>
-</head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام الانتخابي الذكي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -1146,14 +1137,6 @@
         
         <form id="firstLoginForm">
             <div class="form-group">
-// أضف هذا في قسم الإعدادات الأساسية في لوحة التحكم
-<div class="form-group">
-    <label><i class="fas fa-share-alt"></i> إعدادات المشاركة على وسائل التواصل</label>
-    <button class="btn btn-info btn-block" onclick="advancedMetaSettings()">
-        <i class="fas fa-cog"></i> إعدادات العلامات الوصفية المتقدمة
-    </button>
-    <small style="color: #ccc;">هذا يحل مشكلة عدم ظهور التغييرات عند مشاركة الرابط</small>
-</div>
                 <label for="firstPassword"><i class="fas fa-key"></i> كلمة المرور الأولى</label>
                 <input type="password" id="firstPassword" class="form-control" placeholder="أدخل كلمة المرور الأولى" required>
             </div>
@@ -1236,6 +1219,17 @@
                     </button>
                     
                     <div id="titleMessage" style="margin-top: 10px;"></div>
+                    
+                    <!-- الإضافة الجديدة: زر تغيير شريط العنوان فقط -->
+                    <div class="form-group" style="margin-top: 30px;">
+                        <h3><i class="fas fa-edit"></i> تغيير شريط العنوان</h3>
+                        <label for="tabTitleInput"><i class="fas fa-heading"></i> عنوان شريط المتصفح</label>
+                        <input type="text" id="tabTitleInput" class="form-control" placeholder="أدخل العنوان الجديد لشريط المتصفح">
+                        <button class="btn btn-info btn-block" onclick="changeTabTitleOnly()" style="margin-top: 10px;">
+                            <i class="fas fa-pencil-alt"></i> تغيير شريط العنوان فقط
+                        </button>
+                        <small style="color: #ccc;">هذا يغير عنوان شريط المتصفح فقط دون التأثير على عنوان النظام الرئيسي</small>
+                    </div>
                     
                     <h3 style="margin-top: 30px;"><i class="fas fa-clock"></i> إعدادات الوقت</h3>
                     
@@ -1601,6 +1595,7 @@
     const ADMIN_PASS_2 = 'adminPass2';
     const BACKUP_LOG_KEY = 'backupLog';
     const SYSTEM_HEALTH_KEY = 'systemHealth';
+    const TAB_TITLE_KEY = 'tabTitle';
 
     // --- تحميل البيانات من localStorage أو استخدام الافتراضيات ---
     let candidates = JSON.parse(localStorage.getItem(CANDIDATES_KEY)) || [
@@ -1619,74 +1614,109 @@
     let FINGERPRINT_CODE = "";
     let isVotingOpen = true; // يتم تحديثها بناءً على الوقت
 
-// --- وظائف المساعدة العامة ---
-// --- دالات إدارة العلامات الوصفية للمشاركة ---
-
-function updateMetaTags(newTitle, newDescription = null, newImage = null) {
-    if (!newTitle) return;
+    // --- الدوال الجديدة لإدارة شريط العنوان ---
     
-    // تحديث عنوان الصفحة
-    document.title = newTitle.trim();
-    
-    // تحديث علامات Open Graph
-    document.getElementById('ogTitle').setAttribute('content', newTitle.trim());
-    document.getElementById('twitterTitle').setAttribute('content', newTitle.trim());
-    
-    // تحديث الوصف إذا تم توفيره
-    if (newDescription) {
-        document.getElementById('ogDescription').setAttribute('content', newDescription);
-        document.getElementById('twitterDescription').setAttribute('content', newDescription);
+    // دالة لتغيير شريط العنوان فقط
+    function changeTabTitleOnly() {
+        const newTabTitle = document.getElementById('tabTitleInput').value.trim();
+        
+        if (newTabTitle === "") {
+            showNotification("يرجى إدخال عنوان لشريط المتصفح.", 'danger');
+            return;
+        }
+        
+        // تحديث شريط العنوان فقط
+        document.title = newTabTitle;
+        
+        // تحديث العلامات الوصفية أيضاً
+        document.getElementById('ogTitle').setAttribute('content', newTabTitle);
+        document.getElementById('twitterTitle').setAttribute('content', newTabTitle);
+        
+        // حفظ العنوان الجديد
+        localStorage.setItem(TAB_TITLE_KEY, newTabTitle);
+        
+        showNotification("تم تغيير شريط العنوان بنجاح!", 'success');
+        document.getElementById('tabTitleInput').value = '';
     }
-    
-    // تحديث الصورة إذا تم توفيرها
-    if (newImage) {
-        document.getElementById('ogImage').setAttribute('content', newImage);
-        document.getElementById('twitterImage').setAttribute('content', newImage);
-    }
-    
-    // تحديث URL الحالي
-    const currentUrl = window.location.href;
-    document.getElementById('ogUrl').setAttribute('content', currentUrl);
-    
-    // حفظ الإعدادات
-    localStorage.setItem('metaTitle', newTitle.trim());
-    if (newDescription) localStorage.setItem('metaDescription', newDescription);
-    if (newImage) localStorage.setItem('metaImage', newImage);
-    
-    showNotification('تم تحديث العلامات الوصفية للمشاركة بنجاح', 'success');
-}
 
-function loadMetaTags() {
-    const savedTitle = localStorage.getItem('metaTitle');
-    const savedDescription = localStorage.getItem('metaDescription');
-    const savedImage = localStorage.getItem('metaImage');
-    
-    if (savedTitle) {
-        updateMetaTags(savedTitle, savedDescription, savedImage);
+    // تحميل عنوان الشريط المحفوظ عند بدء التشغيل
+    function loadTabTitle() {
+        const savedTabTitle = localStorage.getItem(TAB_TITLE_KEY);
+        if (savedTabTitle) {
+            document.title = savedTabTitle;
+            document.getElementById('ogTitle').setAttribute('content', savedTabTitle);
+            document.getElementById('twitterTitle').setAttribute('content', savedTabTitle);
+        }
     }
-}
 
-// دالة تغيير شريط العنوان مع العلامات الوصفية
-function changeTabTitle(newTitle) {
-    if (newTitle && newTitle.trim() !== '') {
-        updateMetaTags(newTitle.trim());
+    // --- وظائف المساعدة العامة ---
+    // --- دالات إدارة العلامات الوصفية للمشاركة ---
+
+    function updateMetaTags(newTitle, newDescription = null, newImage = null) {
+        if (!newTitle) return;
+        
+        // تحديث عنوان الصفحة
+        document.title = newTitle.trim();
+        
+        // تحديث علامات Open Graph
+        document.getElementById('ogTitle').setAttribute('content', newTitle.trim());
+        document.getElementById('twitterTitle').setAttribute('content', newTitle.trim());
+        
+        // تحديث الوصف إذا تم توفيره
+        if (newDescription) {
+            document.getElementById('ogDescription').setAttribute('content', newDescription);
+            document.getElementById('twitterDescription').setAttribute('content', newDescription);
+        }
+        
+        // تحديث الصورة إذا تم توفيرها
+        if (newImage) {
+            document.getElementById('ogImage').setAttribute('content', newImage);
+            document.getElementById('twitterImage').setAttribute('content', newImage);
+        }
+        
+        // تحديث URL الحالي
+        const currentUrl = window.location.href;
+        document.getElementById('ogUrl').setAttribute('content', currentUrl);
+        
+        // حفظ الإعدادات
+        localStorage.setItem('metaTitle', newTitle.trim());
+        if (newDescription) localStorage.setItem('metaDescription', newDescription);
+        if (newImage) localStorage.setItem('metaImage', newImage);
+        
+        showNotification('تم تحديث العلامات الوصفية للمشاركة بنجاح', 'success');
     }
-}
 
-// دالة متقدمة لتغيير كل العلامات الوصفية
-function advancedMetaSettings() {
-    const currentTitle = document.title;
-    const currentDesc = document.getElementById('ogDescription').getAttribute('content');
-    const currentImage = document.getElementById('ogImage').getAttribute('content');
-    
-    const newTitle = prompt('عنوان الصفحة الجديد:', currentTitle);
-    if (!newTitle) return;
-    
-    const newDesc = prompt('وصف الصفحة الجديد:', currentDesc);
-    const newImage = prompt('رابط الصورة المصغرة الجديدة:', currentImage);
-    
-    updateMetaTags(newTitle, newDesc, newImage);
-}
+    function loadMetaTags() {
+        const savedTitle = localStorage.getItem('metaTitle');
+        const savedDescription = localStorage.getItem('metaDescription');
+        const savedImage = localStorage.getItem('metaImage');
+        
+        if (savedTitle) {
+            updateMetaTags(savedTitle, savedDescription, savedImage);
+        }
+    }
+
+    // دالة تغيير شريط العنوان مع العلامات الوصفية
+    function changeTabTitle(newTitle) {
+        if (newTitle && newTitle.trim() !== '') {
+            updateMetaTags(newTitle.trim());
+        }
+    }
+
+    // دالة متقدمة لتغيير كل العلامات الوصفية
+    function advancedMetaSettings() {
+        const currentTitle = document.title;
+        const currentDesc = document.getElementById('ogDescription').getAttribute('content');
+        const currentImage = document.getElementById('ogImage').getAttribute('content');
+        
+        const newTitle = prompt('عنوان الصفحة الجديد:', currentTitle);
+        if (!newTitle) return;
+        
+        const newDesc = prompt('وصف الصفحة الجديد:', currentDesc);
+        const newImage = prompt('رابط الصورة المصغرة الجديدة:', currentImage);
+        
+        updateMetaTags(newTitle, newDesc, newImage);
+    }
 
     function saveCandidates() {
         localStorage.setItem(CANDIDATES_KEY, JSON.stringify(candidates));
@@ -1817,12 +1847,6 @@ function advancedMetaSettings() {
         renderCandidates();
         updateMainStats();
     }
-  // تغيير العنوان إلى "النظام الانتخابي المتقدم"
-changeTabTitle('النظام الانتخابي المتقدم');
-
-// أو من خلال prompt للمستخدم
-const newTitle = prompt('أدخل العنوان الجديد لشريط المتصفح:');
-changeTabTitle(newTitle);
     
     // --- وظائف إدارة كلمات المرور ---
 
@@ -2076,7 +2100,6 @@ changeTabTitle(newTitle);
         const participation = candidates.length > 0 ? (totalVotes * 100 / (candidates.length * 1000)).toFixed(2) : 0; // افتراض إجمالي الناخبين 1000 لكل مرشح كـ Demo
 
         document.getElementById('mainTitle').innerHTML = `<i class="fas fa-shield-alt"></i> ${systemTitle} <i class="fas fa-poll"></i>`;
-        document.title = systemTitle; // تصحيح: تحديث شريط العنوان هنا أيضاً
         document.getElementById('systemTitle').value = systemTitle;
         
         document.getElementById('mainStatCandidates').textContent = candidates.length;
@@ -2389,21 +2412,15 @@ changeTabTitle(newTitle);
     }
 
     // --- وظيفة التهيئة الرئيسية ---
-function initApp() {
-// --- وظيفة التهيئة الرئيسية ---
-function initApp() {
-    document.getElementById('mainContent').style.display = 'block'; 
-    
-    // تحميل العلامات الوصفية المحفوظة
-    loadMetaTags();
-    
-    renderCandidates();
-    updateMainStats();
-    updateAdvancedFeaturesDisplay();
-    
-    // باقي الكود الحالي...
-}
+    function initApp() {
         document.getElementById('mainContent').style.display = 'block'; 
+        
+        // تحميل العلامات الوصفية المحفوظة
+        loadMetaTags();
+        
+        // تحميل عنوان الشريط المحفوظ
+        loadTabTitle();
+        
         renderCandidates();
         updateMainStats();
         updateAdvancedFeaturesDisplay();
@@ -2446,13 +2463,6 @@ function initApp() {
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
-  
 </script>
-  // تغيير العنوان إلى "النظام الانتخابي المتقدم"
-changeTabTitle('النظام الانتخابي المتقدم');
-
-// أو من خلال prompt للمستخدم
-const newTitle = prompt('أدخل العنوان الجديد لشريط المتصفح:');
-changeTabTitle(newTitle);
 </body>
 </html>
