@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام الانتخابي الذكي</title>
     
-    <!-- علامات Open Graph للمشاركة على وسائل التواصل -->
     <meta property="og:title" content="النظام الانتخابي الذكي" id="ogTitle">
     <meta property="og:description" content="نظام التصويت الإلكتروني الآمن والمتقدم" id="ogDescription">
     <meta property="og:image" content="https://via.placeholder.com/1200x630/1a237e/ffffff?text=النظام+الانتخابي+الذكي" id="ogImage">
@@ -13,7 +12,6 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="النظام الانتخابي الذكي">
     
-    <!-- علامات Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="النظام الانتخابي الذكي" id="twitterTitle">
     <meta name="twitter:description" content="نظام التصويت الإلكتروني الآمن والمتقدم" id="twitterDescription">
@@ -1220,7 +1218,6 @@
                     
                     <div id="titleMessage" style="margin-top: 10px;"></div>
                     
-                    <!-- الإضافة الجديدة: زر تغيير شريط العنوان فقط -->
                     <div class="form-group" style="margin-top: 30px;">
                         <h3><i class="fas fa-edit"></i> تغيير شريط العنوان</h3>
                         <label for="tabTitleInput"><i class="fas fa-heading"></i> عنوان شريط المتصفح</label>
@@ -1354,7 +1351,6 @@
                     </div>
                 </div>
 
-                <!-- تبويب الميزات المتقدمة الجديد -->
                 <div id="advanced-tab" class="tab-content">
                     <h3><i class="fas fa-rocket"></i> الميزات المتقدمة للنظام</h3>
                     
@@ -1468,7 +1464,6 @@
                     <i class="fas fa-sync"></i> تحديث جميع البيانات
                 </button>
 
-                <!-- لوحة الميزات المتقدمة في الشريط الجانبي -->
                 <div class="advanced-features-panel" style="margin-top: 20px;">
                     <h4><i class="fas fa-rocket"></i> حالة الميزات المتقدمة</h4>
                     <div class="feature-card">
@@ -1506,7 +1501,6 @@
             <h1 id="mainTitle"><i class="fas fa-shield-alt"></i> النظام الانتخابي الذكي <i class="fas fa-poll"></i></h1>
             <p>مرحباً بك في نظام التصويت الإلكتروني الأكثر أماناً وشفافية. يرجى اختيار مرشحك بحرية ومسؤولية.</p>
             
-            <!-- لوحة الميزات المتقدمة في الواجهة الرئيسية -->
             <div class="advanced-features-panel">
                 <h3><i class="fas fa-rocket"></i> الميزات المتقدمة للنظام</h3>
                 <div class="feature-grid">
@@ -1587,6 +1581,60 @@
     </div>
 
 <script>
+    // ----------------------------------------------------------------------
+    // --- ملاحظات Supabase: ابدأ من هنا إذا أردت تفعيل التزامن مع Supabase ---
+    // ----------------------------------------------------------------------
+
+    /*
+    const SUPABASE_URL = 'https://your-project.supabase.co';
+    const SUPABASE_KEY = 'your-anon-key';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadCandidatesFromSupabase() {
+        const { data, error } = await supabase
+            .from('candidates')
+            .select('*')
+            .order('votes', { ascending: false });
+        
+        if (error) {
+            console.error('Error loading candidates from Supabase:', error);
+            // استخدم البيانات المحلية كاحتياطي إذا فشل التحميل من Supabase
+            return JSON.parse(localStorage.getItem('electionCandidates')) || [];
+        }
+        return data.map(c => ({
+            id: c.id, 
+            name: c.name, 
+            party: c.party, 
+            votes: c.votes, 
+            imageUrl: c.image_url 
+        })) || [];
+    }
+
+    // دالة لتحديث الواجهة تلقائياً عند تغيير البيانات في Supabase
+    function setupRealtimeUpdates() {
+        supabase
+            .channel('candidates-changes')
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'candidates' },
+                async (payload) => {
+                    console.log('Realtime change received!', payload);
+                    candidates = await loadCandidatesFromSupabase();
+                    renderCandidates();
+                    updateMainStats();
+                    if (document.getElementById('dashboard').style.display === 'block') {
+                        renderDashboardCandidates();
+                        renderDashboardStats();
+                    }
+                }
+            )
+            .subscribe();
+    }
+    */
+    // ----------------------------------------------------------------------
+    // --- نهاية ملاحظات Supabase: الكود أدناه يعتمد على LocalStorage ---
+    // ----------------------------------------------------------------------
+
+
     // --- متغيرات التخزين الأساسية (يمكن تغييرها) ---
     const CANDIDATES_KEY = 'electionCandidates';
     const END_TIME_KEY = 'votingEndTime';
@@ -1683,7 +1731,7 @@
         if (newDescription) localStorage.setItem('metaDescription', newDescription);
         if (newImage) localStorage.setItem('metaImage', newImage);
         
-        showNotification('تم تحديث العلامات الوصفية للمشاركة بنجاح', 'success');
+        // showNotification('تم تحديث العلامات الوصفية للمشاركة بنجاح', 'success');
     }
 
     function loadMetaTags() {
@@ -1703,7 +1751,7 @@
         }
     }
 
-    // دالة متقدمة لتغيير كل العلامات الوصفية
+    // دالة متقدمة لتغيير كل العلامات الوصفية (غير مستخدمة في الواجهة حالياً، يمكن إضافتها)
     function advancedMetaSettings() {
         const currentTitle = document.title;
         const currentDesc = document.getElementById('ogDescription').getAttribute('content');
@@ -1720,6 +1768,14 @@
 
     function saveCandidates() {
         localStorage.setItem(CANDIDATES_KEY, JSON.stringify(candidates));
+        // ملاحظة Supabase: هنا يجب استبدال التخزين بـ Supabase
+        /*
+        candidates.forEach(async (candidate) => {
+            await supabase
+                .from('candidates')
+                .upsert({ id: candidate.id, name: candidate.name, party: candidate.party, votes: candidate.votes, image_url: candidate.imageUrl });
+        });
+        */
     }
 
     function showNotification(message, type = 'success') {
@@ -1785,7 +1841,8 @@
     // --- نظام الأمان وتسجيل الدخول ---
 
     function generateFingerprintCode() {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        // توليد رمز بصمة ستة أرقام
+        const code = Math.floor(100000 + Math.random() * 900000).toString(); 
         FINGERPRINT_CODE = code;
         const demoElement = document.getElementById('demoFingerprint');
         if (demoElement) demoElement.textContent = code;
@@ -1888,7 +1945,7 @@
         // **ملاحظة:** التعامل مع File Input يقتصر على عرض الصورة محلياً ولا يمكن حفظها على السيرفر (Github Pages)
         const fileInput = document.getElementById('newCandidateImageFile');
         if (fileInput.files.length > 0) {
-            // هنا يجب أن يتم تحميل الصورة إلى سيرفر، لكن في هذا المثال نستخدم رابط افتراضي
+            // هنا يجب أن يتم تحميل الصورة إلى سيرفر
             showNotification("تمت إضافة المرشح بنجاح! (الصورة المحملة لن تُحفظ بشكل دائم في هذا العرض)", 'warning');
         }
 
@@ -2043,6 +2100,7 @@
     
     function checkVotingStatus() {
         const now = new Date();
+        // قم بتحديث isVotingOpen في كل مرة يتم فيها التحقق من الحالة
         isVotingOpen = now < votingEndTime;
 
         const timerDisplay = document.getElementById('mainTimerDisplay');
@@ -2084,7 +2142,15 @@
 
         const candidate = candidates.find(c => c.id === id);
         if (candidate) {
+            // ملاحظة Supabase: هنا يجب استبدال هذا الجزء بدالة Supabase:
+            /*
+            await supabase
+                .from('candidates')
+                .update({ votes: candidate.votes + 1 })
+                .eq('id', id);
+            */
             candidate.votes++;
+            
             hasVoted = true;
             localStorage.setItem(VOTED_KEY, 'true');
             saveCandidates();
@@ -2096,11 +2162,17 @@
 
     function updateMainStats() {
         const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
-        const leader = candidates.reduce((max, c) => (c.votes > max.votes ? c : max), { votes: -1, name: '--' });
-        const participation = candidates.length > 0 ? (totalVotes * 100 / (candidates.length * 1000)).toFixed(2) : 0; // افتراض إجمالي الناخبين 1000 لكل مرشح كـ Demo
+        let leader = { votes: -1, name: '--' };
+        if (candidates.length > 0) {
+            leader = candidates.reduce((max, c) => (c.votes > max.votes ? c : max), { votes: -1, name: '--' });
+        }
+        // افتراض إجمالي الناخبين 1000 لكل مرشح كـ Demo
+        const maxPossibleVotes = candidates.length * 1000; 
+        const participation = maxPossibleVotes > 0 ? (totalVotes * 100 / maxPossibleVotes).toFixed(2) : 0; 
 
         document.getElementById('mainTitle').innerHTML = `<i class="fas fa-shield-alt"></i> ${systemTitle} <i class="fas fa-poll"></i>`;
-        document.getElementById('systemTitle').value = systemTitle;
+        const systemTitleInput = document.getElementById('systemTitle');
+        if (systemTitleInput) systemTitleInput.value = systemTitle;
         
         document.getElementById('mainStatCandidates').textContent = candidates.length;
         document.getElementById('mainStatTotalVotes').textContent = totalVotes;
@@ -2160,7 +2232,7 @@
         }
         systemTitle = newTitle.trim();
         localStorage.setItem('systemTitle', systemTitle);
-        document.title = systemTitle; // <--- السطر الإضافي لتبويب المتصفح
+        document.title = systemTitle; 
         updateMainStats(); // لتحديث العنوان في الواجهة الرئيسية
         showNotification("تم تحديث عنوان النظام بنجاح.", 'success');
     }
@@ -2379,7 +2451,10 @@
     }
 
     function addBackupLog(message) {
-        const timestamp = new Date().toLocaleString('ar-EG');
+        // تنسيق الوقت
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const timestamp = new Date().toLocaleString('ar-EG', options);
+        
         backupLog.unshift({
             time: timestamp,
             message: message
@@ -2412,7 +2487,14 @@
     }
 
     // --- وظيفة التهيئة الرئيسية ---
-    function initApp() {
+    async function initApp() {
+        
+        // ملاحظة Supabase: إذا كنت تستخدم Supabase، يجب أن يتم تحميل المرشحين هنا
+        /*
+        candidates = await loadCandidatesFromSupabase();
+        setupRealtimeUpdates();
+        */
+
         document.getElementById('mainContent').style.display = 'block'; 
         
         // تحميل العلامات الوصفية المحفوظة
@@ -2460,6 +2542,10 @@
         setInterval(() => {
             addBackupLog("نسخ احتياطي تلقائي - ناجح");
         }, 300000);
+        
+        // عرض الواجهة الرئيسية الافتراضية عند البدء
+        document.getElementById('mainContent').style.display = 'block'; 
+        document.getElementById('adminAccessBtn').style.display = 'block';
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
