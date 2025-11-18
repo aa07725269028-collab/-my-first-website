@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام الانتخابي الذكي</title>
+    
+    <!-- علامات Open Graph للمشاركة على وسائل التواصل -->
+    <meta property="og:title" content="النظام الانتخابي الذكي" id="ogTitle">
+    <meta property="og:description" content="نظام التصويت الإلكتروني الآمن والمتقدم" id="ogDescription">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/1a237e/ffffff?text=النظام+الانتخابي+الذكي" id="ogImage">
+    <meta property="og:url" content="" id="ogUrl">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="النظام الانتخابي الذكي">
+    
+    <!-- علامات Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="النظام الانتخابي الذكي" id="twitterTitle">
+    <meta name="twitter:description" content="نظام التصويت الإلكتروني الآمن والمتقدم" id="twitterDescription">
+    <meta name="twitter:image" content="https://via.placeholder.com/1200x630/1a237e/ffffff?text=النظام+الانتخابي+الذكي" id="twitterImage">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    /* الأنماط الحالية */
+    </style>
+</head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النظام الانتخابي الذكي</title>
@@ -804,6 +828,24 @@
         }
         
         /* أنماط جديدة */
+/* أنماط إضافية للوحة التحكم */
+.social-meta-preview {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.meta-preview-item {
+    margin: 8px 0;
+    font-size: 0.9rem;
+}
+
+.meta-preview-label {
+    color: var(--secondary);
+    font-weight: bold;
+}
         .social-share {
             display: flex;
             justify-content: center;
@@ -1104,6 +1146,14 @@
         
         <form id="firstLoginForm">
             <div class="form-group">
+// أضف هذا في قسم الإعدادات الأساسية في لوحة التحكم
+<div class="form-group">
+    <label><i class="fas fa-share-alt"></i> إعدادات المشاركة على وسائل التواصل</label>
+    <button class="btn btn-info btn-block" onclick="advancedMetaSettings()">
+        <i class="fas fa-cog"></i> إعدادات العلامات الوصفية المتقدمة
+    </button>
+    <small style="color: #ccc;">هذا يحل مشكلة عدم ظهور التغييرات عند مشاركة الرابط</small>
+</div>
                 <label for="firstPassword"><i class="fas fa-key"></i> كلمة المرور الأولى</label>
                 <input type="password" id="firstPassword" class="form-control" placeholder="أدخل كلمة المرور الأولى" required>
             </div>
@@ -1569,7 +1619,74 @@
     let FINGERPRINT_CODE = "";
     let isVotingOpen = true; // يتم تحديثها بناءً على الوقت
 
-    // --- وظائف المساعدة العامة ---
+// --- وظائف المساعدة العامة ---
+// --- دالات إدارة العلامات الوصفية للمشاركة ---
+
+function updateMetaTags(newTitle, newDescription = null, newImage = null) {
+    if (!newTitle) return;
+    
+    // تحديث عنوان الصفحة
+    document.title = newTitle.trim();
+    
+    // تحديث علامات Open Graph
+    document.getElementById('ogTitle').setAttribute('content', newTitle.trim());
+    document.getElementById('twitterTitle').setAttribute('content', newTitle.trim());
+    
+    // تحديث الوصف إذا تم توفيره
+    if (newDescription) {
+        document.getElementById('ogDescription').setAttribute('content', newDescription);
+        document.getElementById('twitterDescription').setAttribute('content', newDescription);
+    }
+    
+    // تحديث الصورة إذا تم توفيرها
+    if (newImage) {
+        document.getElementById('ogImage').setAttribute('content', newImage);
+        document.getElementById('twitterImage').setAttribute('content', newImage);
+    }
+    
+    // تحديث URL الحالي
+    const currentUrl = window.location.href;
+    document.getElementById('ogUrl').setAttribute('content', currentUrl);
+    
+    // حفظ الإعدادات
+    localStorage.setItem('metaTitle', newTitle.trim());
+    if (newDescription) localStorage.setItem('metaDescription', newDescription);
+    if (newImage) localStorage.setItem('metaImage', newImage);
+    
+    showNotification('تم تحديث العلامات الوصفية للمشاركة بنجاح', 'success');
+}
+
+function loadMetaTags() {
+    const savedTitle = localStorage.getItem('metaTitle');
+    const savedDescription = localStorage.getItem('metaDescription');
+    const savedImage = localStorage.getItem('metaImage');
+    
+    if (savedTitle) {
+        updateMetaTags(savedTitle, savedDescription, savedImage);
+    }
+}
+
+// دالة تغيير شريط العنوان مع العلامات الوصفية
+function changeTabTitle(newTitle) {
+    if (newTitle && newTitle.trim() !== '') {
+        updateMetaTags(newTitle.trim());
+    }
+}
+
+// دالة متقدمة لتغيير كل العلامات الوصفية
+function advancedMetaSettings() {
+    const currentTitle = document.title;
+    const currentDesc = document.getElementById('ogDescription').getAttribute('content');
+    const currentImage = document.getElementById('ogImage').getAttribute('content');
+    
+    const newTitle = prompt('عنوان الصفحة الجديد:', currentTitle);
+    if (!newTitle) return;
+    
+    const newDesc = prompt('وصف الصفحة الجديد:', currentDesc);
+    const newImage = prompt('رابط الصورة المصغرة الجديدة:', currentImage);
+    
+    updateMetaTags(newTitle, newDesc, newImage);
+}
 
     function saveCandidates() {
         localStorage.setItem(CANDIDATES_KEY, JSON.stringify(candidates));
@@ -2272,7 +2389,20 @@ changeTabTitle(newTitle);
     }
 
     // --- وظيفة التهيئة الرئيسية ---
-    function initApp() {
+function initApp() {
+// --- وظيفة التهيئة الرئيسية ---
+function initApp() {
+    document.getElementById('mainContent').style.display = 'block'; 
+    
+    // تحميل العلامات الوصفية المحفوظة
+    loadMetaTags();
+    
+    renderCandidates();
+    updateMainStats();
+    updateAdvancedFeaturesDisplay();
+    
+    // باقي الكود الحالي...
+}
         document.getElementById('mainContent').style.display = 'block'; 
         renderCandidates();
         updateMainStats();
@@ -2318,5 +2448,11 @@ changeTabTitle(newTitle);
     document.addEventListener('DOMContentLoaded', initApp);
   
 </script>
+  // تغيير العنوان إلى "النظام الانتخابي المتقدم"
+changeTabTitle('النظام الانتخابي المتقدم');
+
+// أو من خلال prompt للمستخدم
+const newTitle = prompt('أدخل العنوان الجديد لشريط المتصفح:');
+changeTabTitle(newTitle);
 </body>
 </html>
